@@ -1007,6 +1007,19 @@ def _ler_emails():
                                                       'cliente', 'tipo', 'descricao', 'colaborador', 'prazo', 'origem',
                                                       'prioridade', 'obs', 'trecho', 'conversa')})
                         novas += 1
+                        # Sincronizar com painel profissional
+                        try:
+                            from integracao_painel_profissional import sincronizar_ao_criar
+                            threading.Thread(target=lambda: sincronizar_ao_criar({
+                                'cliente': r.get('cliente', ''),
+                                'descricao': r.get('descricao', ''),
+                                'tipo': r.get('tipo', 'Outros'),
+                                'prioridade': r.get('prioridade', 'Média'),
+                                'prazo': r.get('prazo', ''),
+                                'obs': assunto + ('\n' + r.get('obs', '') if r.get('obs') else '')
+                            }), daemon=True).start()
+                        except Exception:
+                            pass
                 elif resultado == 'triagem':
                     triagem += 1
                 else:
