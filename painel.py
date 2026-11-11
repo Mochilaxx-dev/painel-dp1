@@ -260,7 +260,19 @@ def ler_chave_windows(nome):
 
 
 def credenciais(cfg):
-    """E-mail e senha da conta, sempre buscados na chave genérica do Windows."""
+    """E-mail e senha da conta: do Windows (local) ou variáveis de ambiente (produção)."""
+    # Em produção (Railway), ler das variáveis de ambiente
+    if PRODUCAO:
+        email = os.environ.get('EMAIL_USUARIO', '')
+        senha = os.environ.get('EMAIL_SENHA', '')
+        if email and senha:
+            if '@' not in email:
+                raise ErroConfig('EMAIL_USUARIO deve ser um e-mail completo (ex: seu@gmail.com).')
+            return email.lower(), senha
+        # Se não tiver variáveis, retornar vazio para painel funcionar sem email
+        raise ErroConfig('Configure EMAIL_USUARIO e EMAIL_SENHA no Railway para ler emails.')
+
+    # Local: ler do Windows Credential Manager
     nome = cfg.get('chave_windows') or 'gmail'
     achou = ler_chave_windows(nome)
     if not achou:
