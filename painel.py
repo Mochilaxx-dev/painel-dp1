@@ -1455,7 +1455,8 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def _host_ok(self):
-        return (self.headers.get('Host') or '').split(':')[0] in ('localhost', '127.0.0.1')
+        # Aceita conexões de qualquer host (necessário para Railway/produção)
+        return True
 
     def _enviar(self, codigo, corpo, tipo='application/json; charset=utf-8', extra=None):
         if not isinstance(corpo, bytes):
