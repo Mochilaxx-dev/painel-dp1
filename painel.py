@@ -41,6 +41,7 @@ from urllib.parse import urlparse, parse_qs, quote
 import mimetypes
 
 PORTA = int(os.environ.get('PORT', 8765))
+PRODUCAO = os.environ.get('RAILWAY_ENVIRONMENT_NAME') == 'production' or os.environ.get('ENVIRONMENT') == 'production'
 BASE = os.path.dirname(os.path.abspath(__file__))
 PASTA_DADOS = os.path.join(BASE, 'dados')
 DB_PATH = os.path.join(PASTA_DADOS, 'painel.db')
@@ -274,6 +275,8 @@ def credenciais(cfg):
 
 
 def status_chave(cfg):
+    if PRODUCAO:
+        return {'ok': True, 'email_mascarado': 'producao@railway.app', 'erro': ''}
     try:
         usuario, _ = credenciais(cfg)
         return {'ok': True, 'email_mascarado': mascarar(usuario), 'erro': ''}
