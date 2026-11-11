@@ -9,9 +9,22 @@ import requests
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-API_BASE = os.environ.get('PAINEL_API_URL', 'http://localhost:8000/api')
+# ═══════════════════════════════════════════════════════════
+# CONFIGURAÇÃO DO BACKEND DO PAINEL PROFISSIONAL
+# ═══════════════════════════════════════════════════════════
+# Configure a variável de ambiente PAINEL_API_URL com a URL do seu backend
+# Exemplos:
+#   - Local:     http://localhost:8000/api
+#   - Railway:   https://seu-app.railway.app/api
+#   - Outro:     https://seu-dominio.com.br/api
+# ═══════════════════════════════════════════════════════════
+
+API_BASE = os.environ.get('PAINEL_API_URL', '')  # VAZIO = desativado até configurar
 API_USER = os.environ.get('PAINEL_API_USER', 'erick')
 API_PASSWORD = os.environ.get('PAINEL_API_PASSWORD', '1111')
+
+# Flag para saber se a integração está habilitada
+INTEGRACAO_ATIVA = bool(API_BASE and API_BASE.strip())
 
 class IntegracaoPainelProfissional:
     def __init__(self):
@@ -23,6 +36,9 @@ class IntegracaoPainelProfissional:
 
     def autenticar(self) -> bool:
         """Autentica com o painel profissional e obter JWT token"""
+        if not INTEGRACAO_ATIVA:
+            print("⚠️  Integração com painel profissional desativada (PAINEL_API_URL não configurada)")
+            return False
         try:
             url = f"{self.base_url}/auth/login/"
             dados = {"username": self.usuario, "password": self.senha}
