@@ -1245,6 +1245,15 @@ def api_post(rota, d):
                 conversa=(norm(R_PREFIXO_ASSUNTO.sub('', em['assunto'] or '').strip()) + '|' + d['cliente']) if em else '')
             if em:
                 con.execute("UPDATE emails SET resultado='demanda (manual)', demanda_id=? WHERE chave=?", (did, em['chave']))
+        # Sincronizar com painel profissional em background
+        try:
+            from integracao_painel_profissional import sincronizar_ao_criar
+            threading.Thread(target=lambda: sincronizar_ao_criar({
+                'cliente': d['cliente'], 'descricao': d['descricao'], 'tipo': d.get('tipo', 'Outros'),
+                'prioridade': d.get('prioridade', 'Média'), 'prazo': prazo, 'obs': d.get('obs', '')
+            }), daemon=True).start()
+        except Exception:
+            pass
         return {'ok': True}
     if rota == '/api/emails/ignorar':
         with _lock_db, db() as con:
