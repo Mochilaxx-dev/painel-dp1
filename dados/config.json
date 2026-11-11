@@ -1,0 +1,17 @@
+{
+  "provedor": "gmail",
+  "chave_windows": "gmail",
+  "email": "erick.formalize@gmail.com",
+  "imap_host": "imap.gmail.com",
+  "imap_port": 993,
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": 465,
+  "pasta": "INBOX",
+  "ler_a_partir": "2026-11-05",
+  "intervalo_min": 10,
+  "prazo_padrao": 3,
+  "antecedencia": 45,
+  "resumo_ativo": true,
+  "resumo_para": "",
+  "ignorar_remetentes": "noreply, no-reply, naoresponda, nao-responda, donotreply, newsletter, marketing, mailer-daemon, postmaster"
+}
